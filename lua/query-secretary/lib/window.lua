@@ -53,10 +53,8 @@ M.open_center_window = function(opts)
 		width = default_width,
 		height = default_height,
 	}
-	opts.open_win_opts = vim.tbl_extend("force", default_open_win_opts, opts.open_win_opts)
-
-	-- open window with open_win_opts
-	win = vim.api.nvim_open_win(buf, true, opts.open_win_opts)
+	opts.open_win_opts = vim.tbl_extend("force", default_open_win_opts, opts.open_win_opts or {})
+	win = vim.api.nvim_open_win(buf, true, opts.open_win_opts) -- win open
 
 	-- handle win_set_opts
 	local default_win_set_opts = {

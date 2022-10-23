@@ -5,6 +5,7 @@ local ts = require("query-secretary.lib.tree-sitter")
 ---@field lnum number
 ---@field field_name string|nil
 ---@field node_type string
+---@field node_text string
 
 ---gather *field_name* && *node_type* or current node at cursor
 ---up to the top most parent (below root)
@@ -18,12 +19,14 @@ M.gather_query_building_blocks = function()
 	for i = #parents, 1, -1 do
 		local node_type = parents[i]:type()
 		local field_name = ts.get_field_name_of_node(parents[i])
+		local node_text = vim.treesitter.get_node_text(parents[i], 0)
 		local index = #parents - i + 1
 
 		---@type query_building_block
 		local block = {
 			node_type = node_type,
 			field_name = field_name,
+			node_text = node_text,
 			lnum = index,
 		}
 		table.insert(query_building_blocks, block)
