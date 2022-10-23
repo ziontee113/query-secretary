@@ -37,7 +37,7 @@ vim.keymap.set("n", "<C-x><C-c>", function()
 end, {})
 
 vim.keymap.set("n", "<C-x><C-p>", function()
-	window.open_center_window({ width = 24, height = 10 })
+	window.open_center_window({ height = 15 })
 end, {})
 
 vim.keymap.set({ "n", "x" }, "<C-x><C-n>", function()

@@ -17,14 +17,15 @@ M.open_center_window = function(open_win_opts, win_set_opts)
 	local editorHeight = editorStats.height
 
 	-- handle open_win_opts
+	local default_width, default_height = 24, 10
 	local default_opts = {
 		relative = "editor",
-		col = math.ceil((editorWidth - open_win_opts.width) / 2),
-		row = math.ceil((editorHeight - open_win_opts.height) / 2) - 1,
+		col = math.ceil((editorWidth - (open_win_opts.width or default_width)) / 2),
+		row = math.ceil((editorHeight - (open_win_opts.height or default_height)) / 2) - 1,
 		style = "minimal",
 		border = "single",
-		width = 24,
-		height = 10,
+		width = default_width,
+		height = default_height,
 	}
 	open_win_opts = vim.tbl_extend("force", default_opts, open_win_opts)
 
