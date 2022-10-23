@@ -1,6 +1,19 @@
 local M = {}
 local ts_utils = require("nvim-treesitter.ts_utils")
 
+---return the `field_name` of passed in *tsnode*
+---@param node userdata
+---@return userdata|nil
+M.get_field_name_of_node = function(node)
+	local parent = node:parent()
+
+	for children, field_name in parent:iter_children() do
+		if children == node then
+			return field_name
+		end
+	end
+end
+
 ---get top most *(below root)* `ts-node` from the current cursor position
 ---@return ts-node | nil
 M.get_top_node_at_cursor = function()
