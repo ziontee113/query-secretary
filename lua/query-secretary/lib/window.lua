@@ -1,8 +1,20 @@
 local M = {}
 
+---@class open_win_opts
+---@field width number
+---@field height number
+---@field style "minimal"
+---@field border "none"|"single"|"double"|"rounded"|"solid"|"shadow"|table
+---@field noautocmd boolean
+
+---@class win_set_opts
+---@field winhl string
+---@field cursorline boolean
+
 ---open floating window at the center of the editor
----@param open_win_opts table
----@param win_set_opts table | nil
+---@return table { buf = buf, win = win }
+---@param open_win_opts open_win_opts
+---@param win_set_opts win_set_opts|nil
 M.open_center_window = function(open_win_opts, win_set_opts)
 	local buf, win
 
@@ -41,6 +53,8 @@ M.open_center_window = function(open_win_opts, win_set_opts)
 	for key, value in pairs(win_set_opts) do
 		vim.api.nvim_win_set_option(win, key, value)
 	end
+
+	return { buf = buf, win = win }
 end
 
 return M
