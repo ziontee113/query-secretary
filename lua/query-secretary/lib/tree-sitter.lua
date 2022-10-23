@@ -3,7 +3,7 @@ local ts_utils = require("nvim-treesitter.ts_utils")
 
 ---return the `field_name` of passed in *tsnode*
 ---@param node userdata
----@return userdata|nil
+---@return string|nil
 M.get_field_name_of_node = function(node)
 	local parent = node:parent()
 
