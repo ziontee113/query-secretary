@@ -1,9 +1,14 @@
 local M = {}
 local ts = require("query-secretary.lib.tree-sitter")
 
----gather `field_name` && `node_type` or current node at cursor
+---@class query_building_block
+---@field lnum number
+---@field field_name string|nil
+---@field node_type string
+
+---gather *field_name* && *node_type* or current node at cursor
 ---up to the top most parent (below root)
----into query_building_blocks[]
+---into `query_building_blocks[]`
 ---@return query_building_block[]
 M.gather_query_building_blocks = function()
 	local parents = ts.get_parent_nodes_at_cursor({ include_current_node = true })
