@@ -1,11 +1,23 @@
 local M = {}
 local query_processing = require("query-secretary.lib.query-processing")
 local window = require("query-secretary.lib.window")
+local lua_utils = require("query-secretary.lib.lua-utils")
 
-local function add_basic_mappings(win, buf)
+---- Functions -----------------------------------------------------------
+
+local default_predicates = { nil, "eq", "any-of", "contains", "match", "lua-match" }
+local function toggle_predicate_at_cursor()
+	local predicate_index = lua_utils.tbl_index_of(default_predicates, predicate?)
+end
+
+local function handle_keymaps(win, buf)
 	-- close floating window
 	vim.keymap.set("n", "q", function()
 		vim.api.nvim_win_close(win, true)
+	end, { buffer = buf })
+
+	vim.keymap.set("n", "p", function()
+		toggle_predicate_at_cursor()
 	end, { buffer = buf })
 end
 
@@ -40,15 +52,9 @@ M.query_window_initiate = function()
 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines_tbl)
 
 	-- add basic mappings to floating window
-	add_basic_mappings(win, buf)
+	handle_keymaps(win, buf)
 
 	return win, buf
-end
-
-M.add_predicate = function()
-	-- TODO: create mappings handling first to call this method
-	-- with vim.keymap.set, we just need the `win` and `buf` variables
-	-- to set keymap for the floating window
 end
 
 return M
