@@ -1,6 +1,6 @@
 local M = {}
 local ts = require("query-secretary.lib.tree-sitter")
-local qw = require("query-secretary.business.query-window")
+local business__query_window = require("query-secretary.business.query-window")
 
 local ns = vim.api.nvim_create_namespace("query-secretary")
 vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
@@ -25,7 +25,7 @@ vim.keymap.set("n", "<C-x><C-c>", function()
 end, {})
 
 vim.keymap.set({ "n", "x" }, "<C-x><C-n>", function()
-	qw.query_window_initiate()
+	business__query_window.query_window_initiate()
 end, {})
 
 return M
