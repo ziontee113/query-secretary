@@ -6,6 +6,7 @@ local ts = require("query-secretary.lib.tree-sitter")
 ---@field field_name string|nil
 ---@field node_type string
 ---@field node_text string
+---@field predicate string
 
 ---gather *field_name* && *node_type* or current node at cursor
 ---up to the top most parent (below root)
