@@ -26,7 +26,7 @@ local function toggle_predicate_at_cursor(win, buf, query_building_blocks)
 	local new_predicate_index = lua_utils.increment_index_or_index_1(default_predicates, predicate_index, 1)
 	query_building_blocks[block_index].predicate = default_predicates[new_predicate_index]
 
-	M.render_query_window(win, buf, query_building_blocks)
+	-- TODO: render the change
 end
 
 local function handle_keymaps(win, buf, query_building_blocks)
@@ -40,24 +40,13 @@ local function handle_keymaps(win, buf, query_building_blocks)
 	end, { buffer = buf })
 end
 
-M.render_query_window = function(_, buf, query_building_blocks)
-	local lines_tbl = {}
-
-	-- process output lines
-	for i, block in ipairs(query_building_blocks) do
-		table.insert(lines_tbl, string.rep("\t", i - 1) .. "(" .. block.node_type)
-		if i == #query_building_blocks then
-			lines_tbl[i] = lines_tbl[i] .. string.rep(")", i)
-		end
-	end
-
-	-- set floating window text
-	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines_tbl)
-
-	return lines_tbl
-end
-
 M.query_window_initiate = function()
+	-- gather_query_building_blocks
+	local query_building_blocks = query_processing.gather_query_building_blocks()
+
+	-- update query window based on query_building_blocks
+	local lines_tbl = query_processing.query_building_blocks_2_buffer_lines(query_building_blocks)
+
 	-- open empty window with specified options
 	local win, buf = window.open_center_window({
 		open_win_opts = {
@@ -72,11 +61,8 @@ M.query_window_initiate = function()
 		},
 	})
 
-	-- gather_query_building_blocks
-	local query_building_blocks = query_processing.gather_query_building_blocks()
-
-	-- update query window based on query_building_blocks
-	M.render_query_window(win, buf, query_building_blocks)
+	-- set floating window text
+	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines_tbl)
 
 	-- add mappings to floating window
 	handle_keymaps(win, buf, query_building_blocks)

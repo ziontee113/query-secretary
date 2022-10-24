@@ -36,4 +36,18 @@ M.gather_query_building_blocks = function()
 	return query_building_blocks
 end
 
+M.query_building_blocks_2_buffer_lines = function(query_building_blocks)
+	local lines_tbl = {}
+
+	-- process output lines
+	for i, block in ipairs(query_building_blocks) do
+		table.insert(lines_tbl, string.rep("\t", i - 1) .. "(" .. block.node_type)
+		if i == #query_building_blocks then
+			lines_tbl[i] = lines_tbl[i] .. string.rep(")", i)
+		end
+	end
+
+	return lines_tbl
+end
+
 return M

@@ -10,7 +10,8 @@ vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
 ---- Keymaps -----------------------------------------------------------
 
 vim.keymap.set("n", "<C-x><C-l>", function()
-	ts.get_field_name_at_cursor()
+	local ts_utils = require("nvim-treesitter.ts_utils")
+	N(ts_utils.get_node_at_cursor():type())
 end, {})
 
 vim.keymap.set("n", "<C-x><C-x>", function()

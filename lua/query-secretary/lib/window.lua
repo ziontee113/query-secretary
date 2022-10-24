@@ -21,7 +21,7 @@ local M = {}
 ---@field buf_set_opts buf_set_opts
 
 ---open floating window at the center of the editor
----@return winnr, bufnr
+---@return number, number
 ---@param opts open_center_window_opts
 M.open_center_window = function(opts)
 	local buf, win

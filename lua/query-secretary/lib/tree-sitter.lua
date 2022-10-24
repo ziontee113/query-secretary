@@ -42,6 +42,7 @@ end
 M.get_parent_nodes_at_cursor = function(opts)
 	local return_tbl = {}
 	local node = ts_utils.get_node_at_cursor()
+
 	local root = ts_utils.get_root_for_node(node)
 
 	if opts.include_current_node and node then
