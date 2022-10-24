@@ -5,19 +5,39 @@ local lua_utils = require("query-secretary.lib.lua-utils")
 
 ---- Functions -----------------------------------------------------------
 
-local default_predicates = { nil, "eq", "any-of", "contains", "match", "lua-match" }
-local function toggle_predicate_at_cursor()
-	local predicate_index = lua_utils.tbl_index_of(default_predicates, predicate?)
+local function _get_query_block_at_curor(win, query_building_blocks)
+	local win_cur_line = vim.api.nvim_win_get_cursor(win)[1]
+	for i, block in ipairs(query_building_blocks) do
+		if block.lnum == win_cur_line then
+			return i
+		elseif block.lnum > win_cur_line then
+			return i - 1
+		end
+	end
 end
 
-local function handle_keymaps(win, buf)
+local default_predicates = { "eq", "any-of", "contains", "match", "lua-match" }
+local function toggle_predicate_at_cursor(win, query_building_blocks)
+	local block_index = _get_query_block_at_curor(win, query_building_blocks)
+
+	local current_predicate = query_building_blocks[block_index].predicate
+	local predicate_index = lua_utils.tbl_index_of(default_predicates, current_predicate) or 0
+
+	local new_predicate_index = lua_utils.increment_index_or_index_1(default_predicates, predicate_index, 1)
+	query_building_blocks[block_index].predicate = default_predicates[new_predicate_index]
+
+	-- TODO: update the query_window with the new values:
+	-- TODO: call the `query_window_update()` function
+end
+
+local function handle_keymaps(win, buf, query_building_blocks)
 	-- close floating window
 	vim.keymap.set("n", "q", function()
 		vim.api.nvim_win_close(win, true)
 	end, { buffer = buf })
 
 	vim.keymap.set("n", "p", function()
-		toggle_predicate_at_cursor()
+		toggle_predicate_at_cursor(win, query_building_blocks)
 	end, { buffer = buf })
 end
 
@@ -52,7 +72,7 @@ M.query_window_initiate = function()
 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines_tbl)
 
 	-- add basic mappings to floating window
-	handle_keymaps(win, buf)
+	handle_keymaps(win, buf, query_building_blocks)
 
 	return win, buf
 end
