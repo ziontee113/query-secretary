@@ -5,6 +5,8 @@ local business__query_window = require("query-secretary.business.query-window")
 local ns = vim.api.nvim_create_namespace("query-secretary")
 vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
 
+-- TODO: implement our own ts_utils.get_node_at_cursor(), since it doesn't work with comments
+
 ---- Functions -----------------------------------------------------------
 
 ---- Keymaps -----------------------------------------------------------
