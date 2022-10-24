@@ -17,7 +17,7 @@ local function _get_query_block_at_curor(win, query_building_blocks)
 end
 
 local default_predicates = { "eq", "any-of", "contains", "match", "lua-match" }
-local function toggle_predicate_at_cursor(win, query_building_blocks)
+local function toggle_predicate_at_cursor(win, buf, query_building_blocks)
 	local block_index = _get_query_block_at_curor(win, query_building_blocks)
 
 	local current_predicate = query_building_blocks[block_index].predicate
@@ -26,8 +26,7 @@ local function toggle_predicate_at_cursor(win, query_building_blocks)
 	local new_predicate_index = lua_utils.increment_index_or_index_1(default_predicates, predicate_index, 1)
 	query_building_blocks[block_index].predicate = default_predicates[new_predicate_index]
 
-	-- TODO: update the query_window with the new values:
-	-- TODO: call the `query_window_update()` function
+	M.render_query_window(win, buf, query_building_blocks)
 end
 
 local function handle_keymaps(win, buf, query_building_blocks)
@@ -37,16 +36,14 @@ local function handle_keymaps(win, buf, query_building_blocks)
 	end, { buffer = buf })
 
 	vim.keymap.set("n", "p", function()
-		toggle_predicate_at_cursor(win, query_building_blocks)
+		toggle_predicate_at_cursor(win, buf, query_building_blocks)
 	end, { buffer = buf })
 end
 
-M.query_window_initiate = function()
-	-- gather_query_building_blocks
-	local query_building_blocks = query_processing.gather_query_building_blocks()
+M.render_query_window = function(_, buf, query_building_blocks)
 	local lines_tbl = {}
 
-	-- FIX: move this logic block elsewhere
+	-- process output lines
 	for i, block in ipairs(query_building_blocks) do
 		table.insert(lines_tbl, string.rep("\t", i - 1) .. "(" .. block.node_type)
 		if i == #query_building_blocks then
@@ -54,6 +51,13 @@ M.query_window_initiate = function()
 		end
 	end
 
+	-- set floating window text
+	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines_tbl)
+
+	return lines_tbl
+end
+
+M.query_window_initiate = function()
 	-- open empty window with specified options
 	local win, buf = window.open_center_window({
 		open_win_opts = {
@@ -68,10 +72,13 @@ M.query_window_initiate = function()
 		},
 	})
 
-	-- set floating window text
-	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines_tbl)
+	-- gather_query_building_blocks
+	local query_building_blocks = query_processing.gather_query_building_blocks()
 
-	-- add basic mappings to floating window
+	-- update query window based on query_building_blocks
+	M.render_query_window(win, buf, query_building_blocks)
+
+	-- add mappings to floating window
 	handle_keymaps(win, buf, query_building_blocks)
 
 	return win, buf
