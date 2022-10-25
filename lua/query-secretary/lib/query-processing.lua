@@ -62,12 +62,14 @@ M.query_building_blocks_2_buffer_lines = function(query_building_blocks)
 		if not block.predicate then
 			closing_parentacies_stack = closing_parentacies_stack .. ")"
 		elseif block.predicate then
-			local predicate_condition = "test"
+			-- show block.node_text as predicate_argument
+			-- if block.node_text don't have any %s characters ( \n\t) etc..
+			local predicate_argument = "test"
 			if not string.match(block.node_text, "%s") then
-				predicate_condition = block.node_text
+				predicate_argument = block.node_text
 			end
 
-			local predicate_content = "@cap (#" .. block.predicate .. '? @cap "' .. predicate_condition .. '")'
+			local predicate_content = "@cap (#" .. block.predicate .. '? @cap "' .. predicate_argument .. '")'
 			local line = ") " .. predicate_content .. closing_parentacies_stack
 
 			if i < #query_building_blocks then
