@@ -12,17 +12,20 @@ M.tbl_index_of = function(tbl, value)
 	end
 end
 
+---@class increment_index_opts
+---@field table table
+---@field index number
+---@field increment number
+---@field fallback any
+
 ---if *index + increment <= #tbl*, returns `index + increment`
----otherwise returns `1`
----@param tbl table
----@param index integer
----@param increment integer
----@return number
-M.increment_index_or_index_1 = function(tbl, index, increment)
-	if index + increment <= #tbl then
-		return index + increment
+---otherwise returns `fallback`
+---@param opts increment_index_opts
+M.increment_index = function(opts)
+	if opts.index + opts.increment <= #opts.table then
+		return opts.index + opts.increment
 	else
-		return 1
+		return opts.fallback
 	end
 end
 
