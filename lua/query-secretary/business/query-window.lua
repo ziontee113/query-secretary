@@ -23,13 +23,18 @@ local default_predicates = { "eq", "any-of", "contains", "match", "lua-match" }
 ---@param win number
 ---@param buf number
 ---@param query_building_blocks query_building_block[]
-local function toggle_predicate_at_cursor(win, buf, query_building_blocks)
+local function toggle_predicate_at_cursor(win, buf, query_building_blocks, increment)
 	local block_index = _get_query_block_at_curor(win, buf, query_building_blocks)
 
 	local current_predicate = query_building_blocks[block_index].predicate
 	local predicate_index = lua_utils.tbl_index_of(default_predicates, current_predicate) or 0
 
-	local new_predicate_index = lua_utils.increment_index_or_index_1(default_predicates, predicate_index, 1)
+	local new_predicate_index = lua_utils.increment_index({
+		table = default_predicates,
+		index = predicate_index,
+		increment = increment,
+		fallback = nil,
+	})
 	query_building_blocks[block_index].predicate = default_predicates[new_predicate_index]
 
 	M.render_query_window(win, buf, query_building_blocks)
@@ -45,7 +50,10 @@ local function handle_keymaps(win, buf, query_building_blocks)
 	end, { buffer = buf })
 
 	vim.keymap.set("n", "p", function()
-		toggle_predicate_at_cursor(win, buf, query_building_blocks)
+		toggle_predicate_at_cursor(win, buf, query_building_blocks, 1)
+	end, { buffer = buf })
+	vim.keymap.set("n", "P", function()
+		toggle_predicate_at_cursor(win, buf, query_building_blocks, -1)
 	end, { buffer = buf })
 end
 
