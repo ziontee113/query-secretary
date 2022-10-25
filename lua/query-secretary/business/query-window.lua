@@ -139,6 +139,9 @@ M.query_window_initiate = function()
 	-- add mappings to floating window
 	handle_keymaps(win, buf, query_building_blocks)
 
+	-- jump to last line of query window after opening it
+	vim.cmd(":norm! G")
+
 	return win, buf
 end
 

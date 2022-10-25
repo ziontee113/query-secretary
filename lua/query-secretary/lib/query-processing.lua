@@ -63,7 +63,7 @@ M.query_building_blocks_2_buffer_lines = function(query_building_blocks)
 			closing_parentacies_stack = closing_parentacies_stack .. ")"
 		elseif block.predicate then
 			local predicate_condition = "test"
-			if #block.node_text < 12 then
+			if not string.match(block.node_text, "%s") then
 				predicate_condition = block.node_text
 			end
 
