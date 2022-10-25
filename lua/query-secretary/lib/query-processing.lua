@@ -62,7 +62,12 @@ M.query_building_blocks_2_buffer_lines = function(query_building_blocks)
 		if not block.predicate then
 			closing_parentacies_stack = closing_parentacies_stack .. ")"
 		elseif block.predicate then
-			local predicate_content = "@cap (#" .. block.predicate .. '? @cap "test")'
+			local predicate_condition = "test"
+			if #block.node_text < 12 then
+				predicate_condition = block.node_text
+			end
+
+			local predicate_content = "@cap (#" .. block.predicate .. '? @cap "' .. predicate_condition .. '")'
 			local line = ") " .. predicate_content .. closing_parentacies_stack
 
 			if i < #query_building_blocks then
