@@ -40,6 +40,17 @@ local function toggle_predicate_at_cursor(win, buf, query_building_blocks, incre
 	M.render_query_window(win, buf, query_building_blocks)
 end
 
+---removes predicate at cursor
+---@param win number
+---@param buf number
+---@param query_building_blocks query_building_block[]
+local function remove_predicate_at_cursor(win, buf, query_building_blocks)
+	local block_index = _get_query_block_at_curor(win, buf, query_building_blocks)
+	query_building_blocks[block_index].predicate = nil
+
+	M.render_query_window(win, buf, query_building_blocks)
+end
+
 ---@param win number
 ---@param buf number
 ---@param query_building_blocks query_building_block[]
@@ -55,6 +66,10 @@ local function handle_keymaps(win, buf, query_building_blocks)
 	vim.keymap.set("n", "P", function()
 		toggle_predicate_at_cursor(win, buf, query_building_blocks, -1)
 	end, { buffer = buf })
+
+	vim.keymap.set("n", "d", function()
+		remove_predicate_at_cursor(win, buf, query_building_blocks)
+	end, { buffer = buf, nowait = true })
 end
 
 ---@param _ number
