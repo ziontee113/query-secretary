@@ -68,9 +68,9 @@ local function toggle_field_name_at_cursor(win, buf, query_building_blocks)
 end
 
 local query_window_augroup_name = "Query Secretary - Query Window"
-pcall(vim.api.nvim_del_augroup_by_name, query_window_augroup_name)
+pcall(vim.api.nvim_del_augroup_by_name, query_window_augroup_name) -- for hot reloading
 local augroup = vim.api.nvim_create_augroup(query_window_augroup_name, {})
-local ns = vim.api.nvim_create_namespace("query_secretary__query_window")
+local oldBuf_namespace = vim.api.nvim_create_namespace("query_secretary__query_window")
 ---@param win number
 ---@param buf number
 ---@param query_building_blocks query_building_block[]
@@ -80,14 +80,14 @@ local function query_window_handle_autocmds(win, buf, query_building_blocks)
 		group = augroup,
 		callback = function()
 			local block_index = _get_query_block_at_curor(win, buf, query_building_blocks)
-			vim.api.nvim_buf_clear_namespace(query_processing.oldBuf, ns, 0, -1)
+			vim.api.nvim_buf_clear_namespace(query_processing.oldBuf, oldBuf_namespace, 0, -1)
 
 			local hl_group = "Visual"
 
 			local start_row, start_col, end_row, end_col = query_building_blocks[block_index].node:range()
 			vim.highlight.range(
 				query_processing.oldBuf,
-				ns,
+				oldBuf_namespace,
 				hl_group,
 				{ start_row, start_col },
 				{ end_row, end_col },
@@ -100,7 +100,7 @@ local function query_window_handle_autocmds(win, buf, query_building_blocks)
 		buffer = buf,
 		group = augroup,
 		callback = function()
-			vim.api.nvim_buf_clear_namespace(query_processing.oldBuf, ns, 0, -1)
+			vim.api.nvim_buf_clear_namespace(query_processing.oldBuf, oldBuf_namespace, 0, -1)
 		end,
 	})
 end
