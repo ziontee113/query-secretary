@@ -1,6 +1,8 @@
 local M = {}
 local ts = require("query-secretary.lib.tree-sitter")
 
+M.oldBuf = 0
+
 ---@class query_building_block
 ---@field lnum number
 ---@field tail number
@@ -38,6 +40,8 @@ M.gather_query_building_blocks = function()
 			table.insert(query_building_blocks, block)
 		end
 	end
+
+	M.oldBuf = vim.api.nvim_get_current_buf()
 
 	return query_building_blocks
 end
