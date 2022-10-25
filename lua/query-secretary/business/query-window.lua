@@ -55,11 +55,12 @@ end
 ---@param buf number
 ---@param query_building_blocks query_building_block[]
 local function handle_keymaps(win, buf, query_building_blocks)
-	-- close floating window
+	-- close query window
 	vim.keymap.set("n", "q", function()
 		vim.api.nvim_win_close(win, true)
 	end, { buffer = buf })
 
+	-- next / previous predicate at cursor
 	vim.keymap.set("n", "p", function()
 		toggle_predicate_at_cursor(win, buf, query_building_blocks, 1)
 	end, { buffer = buf })
@@ -67,8 +68,15 @@ local function handle_keymaps(win, buf, query_building_blocks)
 		toggle_predicate_at_cursor(win, buf, query_building_blocks, -1)
 	end, { buffer = buf })
 
+	-- remove predicate at cursor
 	vim.keymap.set("n", "d", function()
 		remove_predicate_at_cursor(win, buf, query_building_blocks)
+	end, { buffer = buf, nowait = true })
+
+	-- yank entire query window, then close it
+	vim.keymap.set("n", "y", function()
+		vim.cmd(":% y")
+		vim.api.nvim_win_close(win, true)
 	end, { buffer = buf, nowait = true })
 end
 
