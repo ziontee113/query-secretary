@@ -6,6 +6,7 @@ local ts = require("query-secretary.lib.tree-sitter")
 ---@field tail number
 ---@field field_name string|nil
 ---@field display_field_name boolean|nil
+---@field node userdata
 ---@field node_type string
 ---@field node_text string
 ---@field predicate string
@@ -15,16 +16,16 @@ local ts = require("query-secretary.lib.tree-sitter")
 ---into `query_building_blocks[]`
 ---@return query_building_block[]
 M.gather_query_building_blocks = function()
-	local parents = ts.get_parent_nodes_at_cursor({ include_current_node = true })
+	local nodes = ts.get_parent_nodes_at_cursor({ include_current_node = true })
 	local query_building_blocks = {}
 
 	-- gather building blocks for query_building_blocks
-	if parents then -- TODO: implement our own ts_utils.get_node_at_cursor()
-		for i = #parents, 1, -1 do
-			local node_type = parents[i]:type()
-			local field_name = ts.get_field_name_of_node(parents[i])
-			local node_text = vim.treesitter.get_node_text(parents[i], 0)
-			local index = #parents - i + 1
+	if nodes then -- TODO: implement our own ts_utils.get_node_at_cursor()
+		for i = #nodes, 1, -1 do
+			local node_type = nodes[i]:type()
+			local field_name = ts.get_field_name_of_node(nodes[i])
+			local node_text = vim.treesitter.get_node_text(nodes[i], 0)
+			local index = #nodes - i + 1
 
 			---@type query_building_block
 			local block = {
@@ -32,6 +33,7 @@ M.gather_query_building_blocks = function()
 				field_name = field_name,
 				node_text = node_text,
 				lnum = index,
+				node = nodes[i],
 			}
 			table.insert(query_building_blocks, block)
 		end
