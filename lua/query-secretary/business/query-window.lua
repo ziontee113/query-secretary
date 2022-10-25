@@ -67,10 +67,48 @@ local function toggle_field_name_at_cursor(win, buf, query_building_blocks)
 	M.render_query_window(win, buf, query_building_blocks)
 end
 
+local query_window_augroup_name = "Query Secretary - Query Window"
+pcall(vim.api.nvim_del_augroup_by_name, query_window_augroup_name)
+local augroup = vim.api.nvim_create_augroup(query_window_augroup_name, {})
+local ns = vim.api.nvim_create_namespace("query_secretary__query_window")
 ---@param win number
 ---@param buf number
 ---@param query_building_blocks query_building_block[]
-local function handle_keymaps(win, buf, query_building_blocks)
+local function query_window_handle_autocmds(win, buf, query_building_blocks)
+	vim.api.nvim_create_autocmd({ "CursorMoved" }, {
+		buffer = buf,
+		group = augroup,
+		callback = function()
+			local block_index = _get_query_block_at_curor(win, buf, query_building_blocks)
+			vim.api.nvim_buf_clear_namespace(query_processing.oldBuf, ns, 0, -1)
+
+			local hl_group = "Visual"
+
+			local start_row, start_col, end_row, end_col = query_building_blocks[block_index].node:range()
+			vim.highlight.range(
+				query_processing.oldBuf,
+				ns,
+				hl_group,
+				{ start_row, start_col },
+				{ end_row, end_col },
+				{ priority = 500 }
+			)
+		end,
+	})
+
+	vim.api.nvim_create_autocmd({ "BufWinLeave" }, {
+		buffer = buf,
+		group = augroup,
+		callback = function()
+			vim.api.nvim_buf_clear_namespace(query_processing.oldBuf, ns, 0, -1)
+		end,
+	})
+end
+
+---@param win number
+---@param buf number
+---@param query_building_blocks query_building_block[]
+local function query_window_handle_keymaps(win, buf, query_building_blocks)
 	-- close query window
 	vim.keymap.set("n", "q", function()
 		vim.api.nvim_win_close(win, true)
@@ -102,15 +140,18 @@ local function handle_keymaps(win, buf, query_building_blocks)
 	end, { buffer = buf, nowait = true })
 end
 
----@param _ number
+---@param win number
 ---@param buf number
 ---@param query_building_blocks query_building_block[]
-M.render_query_window = function(_, buf, query_building_blocks)
+M.render_query_window = function(win, buf, query_building_blocks)
 	-- get query window lines {} from query_building_blocks
 	local lines_tbl = query_processing.query_building_blocks_2_buffer_lines(query_building_blocks)
 
 	-- make query window's buffer modifiable
 	window.toggle_buffer_modifiable(buf, true)
+
+	-- handle query window's autocmds
+	query_window_handle_autocmds(win, buf, query_building_blocks)
 
 	-- set query window text with lines_tbl
 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines_tbl)
@@ -144,7 +185,7 @@ M.query_window_initiate = function()
 	M.render_query_window(win, buf, query_building_blocks)
 
 	-- add mappings to floating window
-	handle_keymaps(win, buf, query_building_blocks)
+	query_window_handle_keymaps(win, buf, query_building_blocks)
 
 	-- jump to last line of query window after opening it
 	vim.cmd(":norm! G")
