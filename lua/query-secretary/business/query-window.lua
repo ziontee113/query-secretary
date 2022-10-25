@@ -11,10 +11,11 @@ local lua_utils = require("query-secretary.lib.lua-utils")
 local function _get_query_block_at_curor(win, _, query_building_blocks)
 	local win_cur_line = vim.api.nvim_win_get_cursor(win)[1]
 	for i, block in ipairs(query_building_blocks) do
+		if block.tail and block.tail == win_cur_line then
+			return block.lnum
+		end
 		if block.lnum == win_cur_line then
 			return i
-		elseif block.lnum > win_cur_line then
-			return i - 1
 		end
 	end
 end
