@@ -50,20 +50,21 @@ M.query_building_blocks_2_buffer_lines = function(query_building_blocks)
 
 	-- predicate handling
 	local predicates_lines = {}
-	local closing_parens_stack = ""
+	local closing_parentacies_stack = ""
+
 	for i, block in ipairs(query_building_blocks) do
 		if not block.predicate then
-			closing_parens_stack = closing_parens_stack .. ")"
+			closing_parentacies_stack = closing_parentacies_stack .. ")"
 		elseif block.predicate then
 			local predicate_content = "@cap (#" .. block.predicate .. '? @cap "test")'
-			local line = ") " .. predicate_content .. closing_parens_stack
+			local line = ") " .. predicate_content .. closing_parentacies_stack
 
 			if i < #query_building_blocks then
 				local tabs = string.rep("\t", i - 1)
 				table.insert(predicates_lines, tabs .. line)
-				closing_parens_stack = ""
+				closing_parentacies_stack = ""
 			elseif i == #query_building_blocks then -- inner-most node
-				closing_parens_stack = line
+				closing_parentacies_stack = line
 			end
 		end
 	end
@@ -75,7 +76,7 @@ M.query_building_blocks_2_buffer_lines = function(query_building_blocks)
 
 	-- add closing_parens_stack to last line
 	local i = #query_building_blocks
-	lines_tbl[i] = lines_tbl[i] .. closing_parens_stack
+	lines_tbl[i] = lines_tbl[i] .. closing_parentacies_stack
 
 	return lines_tbl
 end
