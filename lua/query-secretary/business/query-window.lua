@@ -34,7 +34,7 @@ local function toggle_predicate_at_cursor(win, buf, query_building_blocks, incre
 		table = default_predicates,
 		index = predicate_index,
 		increment = increment,
-		fallback = nil,
+		fallback = 1,
 	})
 	query_building_blocks[block_index].predicate = default_predicates[new_predicate_index]
 
