@@ -69,4 +69,18 @@ M.open_center_window = function(opts)
 	return win, buf
 end
 
+---if `value` is *nil*, `toggle` *current_modifiable_value*
+--- -> *modifiable* = *not current_modifiable_value*
+---otherwise set `modifiable` to `value`
+---@param buf number
+---@param value boolean
+M.toggle_buffer_modifiable = function(buf, value)
+	local current_modifiable_value = vim.bo[buf].modifiable
+	if value ~= nil then
+		vim.api.nvim_buf_set_option(buf, "modifiable", value)
+	else
+		vim.api.nvim_buf_set_option(buf, "modifiable", not current_modifiable_value)
+	end
+end
+
 return M
