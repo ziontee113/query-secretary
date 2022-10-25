@@ -109,8 +109,14 @@ M.render_query_window = function(_, buf, query_building_blocks)
 	-- get query window lines {} from query_building_blocks
 	local lines_tbl = query_processing.query_building_blocks_2_buffer_lines(query_building_blocks)
 
+	-- make query window's buffer modifiable
+	window.toggle_buffer_modifiable(buf, true)
+
 	-- set query window text with lines_tbl
 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines_tbl)
+
+	-- disable modifiable for query window's buffer
+	window.toggle_buffer_modifiable(buf, false)
 end
 
 ---Initiate Query Window
