@@ -4,6 +4,7 @@ local ts = require("query-secretary.lib.tree-sitter")
 ---@class query_building_block
 ---@field lnum number
 ---@field field_name string|nil
+---@field display_field_name boolean|nil
 ---@field node_type string
 ---@field node_text string
 ---@field predicate string
@@ -43,12 +44,17 @@ end
 M.query_building_blocks_2_buffer_lines = function(query_building_blocks)
 	local lines_tbl = {}
 
-	-- process output lines
+	-- handle opening ( and node_type
 	for i, block in ipairs(query_building_blocks) do
-		table.insert(lines_tbl, string.rep("\t", i - 1) .. "(" .. block.node_type)
+		local field_name = ""
+		if block.display_field_name and block.field_name then
+			field_name = block.field_name .. ":"
+		end
+		local content = string.rep("\t", i - 1) .. field_name .. "(" .. block.node_type
+		table.insert(lines_tbl, content)
 	end
 
-	-- predicate handling
+	-- handle predicates
 	local predicates_lines = {}
 	local closing_parentacies_stack = ""
 
@@ -69,12 +75,12 @@ M.query_building_blocks_2_buffer_lines = function(query_building_blocks)
 		end
 	end
 
-	---- add part_2_lines to lines_tbl
+	---- add predicates_lines to lines_tbl
 	for i = #predicates_lines, 1, -1 do
 		table.insert(lines_tbl, predicates_lines[i])
 	end
 
-	-- add closing_parens_stack to last line
+	-- add closing_parentacies_stack to last line of lines_tbl
 	local i = #query_building_blocks
 	lines_tbl[i] = lines_tbl[i] .. closing_parentacies_stack
 

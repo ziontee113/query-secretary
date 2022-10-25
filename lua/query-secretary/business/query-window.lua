@@ -51,6 +51,21 @@ local function remove_predicate_at_cursor(win, buf, query_building_blocks)
 	M.render_query_window(win, buf, query_building_blocks)
 end
 
+---toggle field_name at cursor
+---@param win number
+---@param buf number
+---@param query_building_blocks query_building_block[]
+local function toggle_field_name_at_cursor(win, buf, query_building_blocks)
+	local block_index = _get_query_block_at_curor(win, buf, query_building_blocks)
+	if query_building_blocks[block_index].display_field_name then
+		query_building_blocks[block_index].display_field_name = nil
+	else
+		query_building_blocks[block_index].display_field_name = true
+	end
+
+	M.render_query_window(win, buf, query_building_blocks)
+end
+
 ---@param win number
 ---@param buf number
 ---@param query_building_blocks query_building_block[]
@@ -73,10 +88,16 @@ local function handle_keymaps(win, buf, query_building_blocks)
 		remove_predicate_at_cursor(win, buf, query_building_blocks)
 	end, { buffer = buf, nowait = true })
 
+	-- toggle field_name at cursor
+	vim.keymap.set("n", "f", function()
+		toggle_field_name_at_cursor(win, buf, query_building_blocks)
+	end, { buffer = buf, nowait = true })
+
 	-- yank entire query window, then close it
 	vim.keymap.set("n", "y", function()
 		vim.cmd(":% y")
 		vim.api.nvim_win_close(win, true)
+		vim.notify("query yanked")
 	end, { buffer = buf, nowait = true })
 end
 
@@ -84,10 +105,10 @@ end
 ---@param buf number
 ---@param query_building_blocks query_building_block[]
 M.render_query_window = function(_, buf, query_building_blocks)
-	-- update query window based on query_building_blocks
+	-- get query window lines {} from query_building_blocks
 	local lines_tbl = query_processing.query_building_blocks_2_buffer_lines(query_building_blocks)
 
-	-- set floating window text
+	-- set query window text with lines_tbl
 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines_tbl)
 end
 
