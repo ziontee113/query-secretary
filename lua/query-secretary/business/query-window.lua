@@ -139,6 +139,9 @@ local function query_window_handle_keymaps(win, buf, query_building_blocks)
 	vim.keymap.set("n", "q", function()
 		vim.api.nvim_win_close(win, true)
 	end, { buffer = buf })
+	vim.keymap.set("n", "<Esc>", function()
+		vim.api.nvim_win_close(win, true)
+	end, { buffer = buf })
 
 	-- next / previous predicate at cursor
 	vim.keymap.set("n", "p", function()
