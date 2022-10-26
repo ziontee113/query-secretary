@@ -16,15 +16,20 @@ end
 ---@field table table
 ---@field index number
 ---@field increment number
----@field fallback any
+---@field fallback number
+---@field decrement_fallback boolean
 
 ---if *index + increment <= #tbl*, returns `index + increment`
 ---otherwise returns `fallback`
 ---@param opts increment_index_opts
 M.increment_index = function(opts)
-	if opts.index + opts.increment <= #opts.table then
+	local increment_result = opts.index + opts.increment
+	if (increment_result <= #opts.table) and (increment_result > 0) then
 		return opts.index + opts.increment
 	else
+		if opts.decrement_fallback and opts.increment < 0 then
+			return #opts.table
+		end
 		return opts.fallback
 	end
 end

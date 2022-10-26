@@ -37,6 +37,7 @@ local function toggle_predicate_at_cursor(win, buf, query_building_blocks, incre
 		index = predicate_index,
 		increment = increment,
 		fallback = 1,
+		decrement_fallback = true,
 	})
 	query_building_blocks[block_index].predicate = default_predicates[new_predicate_index]
 
@@ -59,6 +60,7 @@ local function toggle_capture_group_name_at_cursor(win, buf, query_building_bloc
 		index = capture_group_index,
 		increment = increment,
 		fallback = 1,
+		decrement_fallback = true,
 	})
 	query_building_blocks[block_index].capture_group_name = default_capture_group_names[new_predicate_index]
 
