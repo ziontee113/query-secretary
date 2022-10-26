@@ -2,6 +2,8 @@
 #### Neovim Plugin that *assists* you in writing Treesitter Queries 🌳
 #### This plugin exists because *we don't want to manually write them* 🤓
 
+![query-secretary](https://user-images.githubusercontent.com/102876811/198027185-0af9abff-830d-464b-8016-bc7a5474b756.png)
+
 ## Demo 🎥
 
 ## A Word of Caution ⚠️
