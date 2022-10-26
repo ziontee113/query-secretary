@@ -6,6 +6,8 @@
 
 ## Demo 🎥
 
+https://user-images.githubusercontent.com/102876811/198029879-dbb552de-05f5-41c0-baa4-eca3d718db98.mp4
+
 ## A Word of Caution ⚠️
 This plugin is still in *Prototype Phase!* With features hasn't been developed yet!
 Such as:
