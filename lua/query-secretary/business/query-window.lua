@@ -21,12 +21,12 @@ local function _get_query_block_at_curor(win, _, query_building_blocks)
 	end
 end
 
-local default_predicates = { "eq", "any-of", "contains", "match", "lua-match" }
 ---@param win number
 ---@param buf number
 ---@param query_building_blocks query_building_block[]
 ---@param increment number
 local function toggle_predicate_at_cursor(win, buf, query_building_blocks, increment)
+	local default_predicates = user_defaults.default_predicates
 	local block_index = _get_query_block_at_curor(win, buf, query_building_blocks)
 
 	local current_predicate = query_building_blocks[block_index].predicate
@@ -108,7 +108,7 @@ local function query_window_handle_autocmds(win, buf, query_building_blocks)
 			local block_index = _get_query_block_at_curor(win, buf, query_building_blocks)
 			vim.api.nvim_buf_clear_namespace(query_processing.oldBuf, oldBuf_namespace, 0, -1)
 
-			local hl_group = "Visual"
+			local hl_group = user_defaults.default_user_hl_group
 
 			local start_row, start_col, end_row, end_col = query_building_blocks[block_index].node:range()
 			vim.highlight.range(
