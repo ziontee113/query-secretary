@@ -1,5 +1,6 @@
 local M = {}
 local ts = require("query-secretary.lib.tree-sitter")
+local user_defaults = require("query-secretary.user.defaults")
 
 M.oldBuf = 0
 
@@ -12,6 +13,7 @@ M.oldBuf = 0
 ---@field node_type string
 ---@field node_text string
 ---@field predicate string
+---@field capture_group_name string
 
 ---gather *field_name* && *node_type* or current node at cursor
 ---up to the top most parent (below root)
@@ -80,9 +82,26 @@ M.query_building_blocks_2_buffer_lines = function(query_building_blocks)
 				predicate_argument = block.node_text
 			end
 
-			local predicate_content = "@cap (#" .. block.predicate .. '? @cap "' .. predicate_argument .. '")'
+			-- handle toggling capture group names
+			local capture_group_name
+			if block.capture_group_name then
+				capture_group_name = block.capture_group_name
+			else
+				capture_group_name = user_defaults.default_capture_group_names[1]
+				block.capture_group_name = user_defaults.default_capture_group_names[1]
+			end
+			local predicate_content = "@"
+				.. capture_group_name
+				.. " (#"
+				.. block.predicate
+				.. "? @"
+				.. capture_group_name
+				.. ' "'
+				.. predicate_argument
+				.. '")'
 			local line = ") " .. predicate_content .. closing_parentacies_stack
 
+			-- handling tabs & tails
 			if i < #query_building_blocks then
 				local tabs = string.rep("\t", i - 1)
 				table.insert(predicates_lines, tabs .. line)

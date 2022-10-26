@@ -2,6 +2,7 @@ local M = {}
 local query_processing = require("query-secretary.lib.query-processing")
 local window = require("query-secretary.lib.window")
 local lua_utils = require("query-secretary.lib.lua-utils")
+local user_defaults = require("query-secretary.user.defaults")
 
 ---- Functions -----------------------------------------------------------
 
@@ -24,6 +25,7 @@ local default_predicates = { "eq", "any-of", "contains", "match", "lua-match" }
 ---@param win number
 ---@param buf number
 ---@param query_building_blocks query_building_block[]
+---@param increment number
 local function toggle_predicate_at_cursor(win, buf, query_building_blocks, increment)
 	local block_index = _get_query_block_at_curor(win, buf, query_building_blocks)
 
@@ -37,6 +39,28 @@ local function toggle_predicate_at_cursor(win, buf, query_building_blocks, incre
 		fallback = 1,
 	})
 	query_building_blocks[block_index].predicate = default_predicates[new_predicate_index]
+
+	M.render_query_window(win, buf, query_building_blocks)
+end
+
+---@param win number
+---@param buf number
+---@param query_building_blocks query_building_block[]
+---@param increment number
+local function toggle_capture_group_name_at_cursor(win, buf, query_building_blocks, increment)
+	local default_capture_group_names = user_defaults.default_capture_group_names
+	local block_index = _get_query_block_at_curor(win, buf, query_building_blocks)
+
+	local current_capture_group_name = query_building_blocks[block_index].capture_group_name
+	local capture_group_index = lua_utils.tbl_index_of(default_capture_group_names, current_capture_group_name) or 0
+
+	local new_predicate_index = lua_utils.increment_index({
+		table = default_capture_group_names,
+		index = capture_group_index,
+		increment = increment,
+		fallback = 1,
+	})
+	query_building_blocks[block_index].capture_group_name = default_capture_group_names[new_predicate_index]
 
 	M.render_query_window(win, buf, query_building_blocks)
 end
@@ -125,6 +149,14 @@ local function query_window_handle_keymaps(win, buf, query_building_blocks)
 	-- remove predicate at cursor
 	vim.keymap.set("n", "d", function()
 		remove_predicate_at_cursor(win, buf, query_building_blocks)
+	end, { buffer = buf, nowait = true })
+
+	-- toggle @capture_group name at cursor
+	vim.keymap.set("n", "c", function()
+		toggle_capture_group_name_at_cursor(win, buf, query_building_blocks, 1)
+	end, { buffer = buf, nowait = true })
+	vim.keymap.set("n", "C", function()
+		toggle_capture_group_name_at_cursor(win, buf, query_building_blocks, -1)
 	end, { buffer = buf, nowait = true })
 
 	-- toggle field_name at cursor

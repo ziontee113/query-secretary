@@ -9,7 +9,7 @@ vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
 
 -- TODO: implement SIBLINGS
 -- TODO: implement CHILDREN
--- TODO: implement Highlighting on Hover
+-- TODO: implement UNNAMED NODES
 
 ---- Functions -----------------------------------------------------------
 
