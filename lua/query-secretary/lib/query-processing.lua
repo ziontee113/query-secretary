@@ -87,8 +87,8 @@ M.query_building_blocks_2_buffer_lines = function(query_building_blocks)
 			if block.capture_group_name then
 				capture_group_name = block.capture_group_name
 			else
-				capture_group_name = user_defaults.default_capture_group_names[1]
-				block.capture_group_name = user_defaults.default_capture_group_names[1]
+				capture_group_name = user_defaults.capture_group_names[1]
+				block.capture_group_name = user_defaults.capture_group_names[1]
 			end
 			local predicate_content = "@"
 				.. capture_group_name

@@ -131,46 +131,55 @@ local function query_window_handle_autocmds(win, buf, query_building_blocks)
 	})
 end
 
+local function set_key(modes, keys, callback, opts)
+	if type(keys) == "string" then
+		keys = { keys }
+	end
+
+	for _, key in ipairs(keys) do
+		vim.keymap.set(modes, key, callback, opts)
+	end
+end
+
 ---@param win number
 ---@param buf number
 ---@param query_building_blocks query_building_block[]
 local function query_window_handle_keymaps(win, buf, query_building_blocks)
+	local keymaps = user_defaults.keymaps
+
 	-- close query window
-	vim.keymap.set("n", "q", function()
-		vim.api.nvim_win_close(win, true)
-	end, { buffer = buf })
-	vim.keymap.set("n", "<Esc>", function()
+	set_key("n", keymaps.close, function()
 		vim.api.nvim_win_close(win, true)
 	end, { buffer = buf })
 
 	-- next / previous predicate at cursor
-	vim.keymap.set("n", "p", function()
+	set_key("n", keymaps.next_predicate, function()
 		toggle_predicate_at_cursor(win, buf, query_building_blocks, 1)
 	end, { buffer = buf })
-	vim.keymap.set("n", "P", function()
+	set_key("n", keymaps.previous_predicate, function()
 		toggle_predicate_at_cursor(win, buf, query_building_blocks, -1)
 	end, { buffer = buf })
 
 	-- remove predicate at cursor
-	vim.keymap.set("n", "d", function()
+	set_key("n", keymaps.remove_predicate, function()
 		remove_predicate_at_cursor(win, buf, query_building_blocks)
 	end, { buffer = buf, nowait = true })
 
 	-- toggle @capture_group name at cursor
-	vim.keymap.set("n", "c", function()
+	set_key("n", keymaps.next_capture_group, function()
 		toggle_capture_group_name_at_cursor(win, buf, query_building_blocks, 1)
 	end, { buffer = buf, nowait = true })
-	vim.keymap.set("n", "C", function()
+	set_key("n", keymaps.previous_capture_group, function()
 		toggle_capture_group_name_at_cursor(win, buf, query_building_blocks, -1)
 	end, { buffer = buf, nowait = true })
 
 	-- toggle field_name at cursor
-	vim.keymap.set("n", "f", function()
+	set_key("n", keymaps.toggle_field_name, function()
 		toggle_field_name_at_cursor(win, buf, query_building_blocks)
 	end, { buffer = buf, nowait = true })
 
 	-- yank entire query window, then close it
-	vim.keymap.set("n", "y", function()
+	set_key("n", keymaps.yank_query, function()
 		vim.cmd(":% y")
 		vim.api.nvim_win_close(win, true)
 		vim.notify("query yanked")

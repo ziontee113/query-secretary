@@ -16,6 +16,17 @@ M.buf_set_opts = {
 	shiftwidth = 2,
 }
 
+M.keymaps = {
+	close = { "q", "Esc" },
+	next_predicate = { "p" },
+	previous_predicate = { "P" },
+	remove_predicate = { "d" },
+	toggle_field_name = { "f" },
+	yank_query = { "y" },
+	next_capture_group = { "c" },
+	previous_capture_group = { "C" },
+}
+
 M.setup = function(opts)
 	for key, value in pairs(opts) do
 		if key == "open_win_opts" or key == "buf_set_opts" then
