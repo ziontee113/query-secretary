@@ -96,9 +96,3 @@ Here are the default keymaps when you're in the Query Window (customizable with 
 -  `f` toggle current node's `field_name`
 -  `p` / `P` toggle current node's `predicate`
 - `d` remove current node's `predicate`
-
-## Self Promotion
-
-I'm looking to work for free (in a company 🏢 or team 👥) as a Front-End Developer 🖥️
-<br>
-**Contact me** at `ziontee113@gmail.com` 📧
