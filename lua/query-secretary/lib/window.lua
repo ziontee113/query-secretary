@@ -6,6 +6,7 @@ local M = {}
 ---@field style "minimal"
 ---@field border "none"|"single"|"double"|"rounded"|"solid"|"shadow"|table
 ---@field noautocmd boolean
+---@field relative "editor"|"cursor"
 
 ---@class win_set_opts
 ---@field winhl string
@@ -43,15 +44,22 @@ M.open_center_window = function(opts)
 	local editorHeight = editorStats.height
 
 	-- handle open_win_opts
-	local default_width, default_height = 24, 10
+	local col = math.ceil((editorWidth - opts.open_win_opts.width) / 2)
+	local row = math.ceil((editorHeight - opts.open_win_opts.height) / 2) - 1
+
+	if opts.open_win_opts.relative == "cursor" then
+		col = 0
+		row = 0
+	end
+
 	local default_open_win_opts = {
-		relative = "editor",
-		col = math.ceil((editorWidth - (opts.open_win_opts.width or default_width)) / 2),
-		row = math.ceil((editorHeight - (opts.open_win_opts.height or default_height)) / 2) - 1,
+		relative = opts.open_win_opts.relative,
+		col = col,
+		row = row,
 		style = "minimal",
 		border = "single",
-		width = default_width,
-		height = default_height,
+		width = opts.open_win_opts.width,
+		height = opts.open_win_opts.height,
 	}
 	opts.open_win_opts = vim.tbl_extend("force", default_open_win_opts, opts.open_win_opts or {})
 	win = vim.api.nvim_open_win(buf, true, opts.open_win_opts) -- win open

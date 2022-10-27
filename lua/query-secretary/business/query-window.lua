@@ -26,7 +26,7 @@ end
 ---@param query_building_blocks query_building_block[]
 ---@param increment number
 local function toggle_predicate_at_cursor(win, buf, query_building_blocks, increment)
-	local default_predicates = user_defaults.default_predicates
+	local default_predicates = user_defaults.predicates
 	local block_index = _get_query_block_at_curor(win, buf, query_building_blocks)
 
 	local current_predicate = query_building_blocks[block_index].predicate
@@ -49,7 +49,7 @@ end
 ---@param query_building_blocks query_building_block[]
 ---@param increment number
 local function toggle_capture_group_name_at_cursor(win, buf, query_building_blocks, increment)
-	local default_capture_group_names = user_defaults.default_capture_group_names
+	local default_capture_group_names = user_defaults.capture_group_names
 	local block_index = _get_query_block_at_curor(win, buf, query_building_blocks)
 
 	local current_capture_group_name = query_building_blocks[block_index].capture_group_name
@@ -108,7 +108,7 @@ local function query_window_handle_autocmds(win, buf, query_building_blocks)
 			local block_index = _get_query_block_at_curor(win, buf, query_building_blocks)
 			vim.api.nvim_buf_clear_namespace(query_processing.oldBuf, oldBuf_namespace, 0, -1)
 
-			local hl_group = user_defaults.default_user_hl_group
+			local hl_group = user_defaults.visual_hl_group
 
 			local start_row, start_col, end_row, end_col = query_building_blocks[block_index].node:range()
 			vim.highlight.range(
@@ -206,16 +206,8 @@ M.query_window_initiate = function()
 
 	-- open empty window with specified options
 	local win, buf = window.open_center_window({
-		open_win_opts = {
-			width = 80,
-			height = 15,
-		},
-		buf_set_opts = {
-			filetype = "query",
-			tabstop = 2,
-			softtabstop = 2,
-			shiftwidth = 2,
-		},
+		open_win_opts = user_defaults.open_win_opts,
+		buf_set_opts = user_defaults.buf_set_opts,
 	})
 
 	-- render results to floating window
