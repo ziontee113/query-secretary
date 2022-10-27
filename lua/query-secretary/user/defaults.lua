@@ -17,7 +17,7 @@ M.buf_set_opts = {
 }
 
 M.keymaps = {
-	close = { "q", "Esc" },
+	close = { "q", "<Esc>" },
 	next_predicate = { "p" },
 	previous_predicate = { "P" },
 	remove_predicate = { "d" },
@@ -29,7 +29,7 @@ M.keymaps = {
 
 M.setup = function(opts)
 	for key, value in pairs(opts) do
-		if key == "open_win_opts" or key == "buf_set_opts" then
+		if key == "open_win_opts" or key == "buf_set_opts" or key == "keymaps" then
 			M[key] = vim.tbl_extend("force", M[key], value)
 		else
 			M[key] = value
