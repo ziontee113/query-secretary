@@ -1,11 +1,10 @@
 {
     "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
-    "Lua.diagnostics.disable": [
-        "undefined-doc-name",
-        "need-check-nil"
-    ],
     "Lua.diagnostics.globals": [
         "vim",
-        "N"
+        "after_each",
+        "before_each",
+        "describe",
+        "it"
     ]
 }
